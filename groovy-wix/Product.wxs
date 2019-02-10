@@ -1,30 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="groovy_wix" Language="1033" Version="1.0.0.0" Manufacturer="" UpgradeCode="2bc2b5b1-5735-4223-85f2-8de0a2390ad2">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <Product Id="*" Name="Groovy" Language="1033" Version="$(var.groovyVersion)" Manufacturer="The Groovy Team" UpgradeCode="786bfbd0-0462-4aad-b54e-70f1f3f58a9a">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-		<MediaTemplate />
+    <Icon Id="GroovyIcon" SourceFile="groovy.ico" />
+    <Property Id="ARPPRODUCTICON" Value="GroovyIcon" />
 
-		<Feature Id="ProductFeature" Title="groovy_wix" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
-		</Feature>
-	</Product>
+    <UIRef Id="WixUI_Mondo" />
+    <WixVariable Id="WixUILicenseRtf" Value="groovy-license.rtf" />
 
-	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="groovy_wix" />
-			</Directory>
-		</Directory>
-	</Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="APPLICATIONFOLDER" Name="Groovy">
+          <Directory Id="DocsFolder" Name="docs" />
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Groovy">
+          <Directory Id="DocumentationProgramsFolder" Name="Documentation" />
+        </Directory>
+      </Directory>
+    </Directory>
 
-	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-			<!-- <Component Id="ProductComponent"> -->
-				<!-- TODO: Insert files, registry keys, and other resources here. -->
-			<!-- </Component> -->
-		</ComponentGroup>
-	</Fragment>
+    <FeatureRef Id="GroovyBinariesFeature" />
+    <FeatureRef Id="GroovyDocsFeature" />
+  </Product>
+
+  <Fragment Id="GroovyBinariesFragment">
+    <Feature Id="GroovyBinariesFeature" Title="Groovy Binaries" Description="Groovy binaries" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
+      <ComponentGroupRef Id="GroovyBinaries" />
+      <Component Id="GroovyConsoleSilent" Guid="370CC6E4-5644-4C0D-BB1D-028D4DA8FB51" Directory="APPLICATIONFOLDER">
+        <File Id="GroovyConsoleVbs" KeyPath="yes" Source="groovyConsole.vbs" />
+      </Component>
+      <Feature Id="GroovyEnvironmentVariables" Title="Set GROOVY_HOME and add to PATH" Description="Set GROOVY_HOME and add to PATH">
+        <Component Id="GroovyHomeComponent" Guid="7B8F9672-02DE-44F9-B6A8-E07095409EAE" Directory="TARGETDIR">
+          <Environment Id="GroovyHome" Name="GROOVY_HOME" Value="[APPLICATIONFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
+        </Component>
+        <Component Id="PathComponent" Guid="2C2116D9-5EA9-4969-9AF4-B3EBC5F96070" Directory="TARGETDIR">
+          <Environment Id="Path" Name="PATH" Value="%GROOVY_HOME%bin" Permanent="no" Part="all" Action="set" System="yes" />
+        </Component>
+      </Feature>
+      <Feature Id="GroovyBinariesShortcutsFeature" Title="Groovy Binaries Shortcuts" Description="Groovy binaries shortcuts">
+        <Component Id="GroovyBinariesShortcuts" Guid="59EE7DBE-2B45-43DE-A489-490C53576255" Directory="ApplicationProgramsFolder">
+          <Shortcut Id="GroovyConsoleShortcut" Name="Groovy Console" Description="Launch Groovy Console" Icon="GroovyIcon" Target="[APPLICATIONFOLDER]\groovyConsole.vbs" WorkingDirectory="APPLICATIONFOLDER" />
+          <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\[ProductName]" Name="BinariesShortcutsInstalled" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Feature>
+    </Feature>
+  </Fragment>
+
+  <Fragment Id="GroovyDocsFragment">
+    <Feature Id="GroovyDocsFeature" Title="Groovy Documentation" Description="Groovy documentation" Display="expand" Level="4" ConfigurableDirectory="APPLICATIONFOLDER">
+      <ComponentGroupRef Id="GroovyDocs" />
+      <Component Id="GroovyDocsRegistry" Guid="D25FE147-BC21-4FA7-AD5D-B73A095909FE" Directory="TARGETDIR">
+        <RegistryValue Root="HKCU" Key="Software\[ProductName]" Name="DocsInstalled" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+      <Feature Id="GroovyDocsShortcutsFeature" Title="Groovy Documentation Shortcuts" Description="Groovy documentation shortcuts">
+        <Component Id="GroovyDocsShortcuts" Guid="DE70A1F7-5597-4773-AB46-42D2D4CABFD7" Directory="DocumentationProgramsFolder">
+          <Shortcut Id="GroovyAPIShortcut" Name="Groovy API" Description="Groovy API" Target="[APPLICATIONFOLDER]\docs\html\api\index.html" />
+          <Shortcut Id="GroovyDocumentationShortcut" Name="Groovy Documentation" Description="Groovy Documentation" Target="[APPLICATIONFOLDER]\docs\html\documentation\index.html" />
+          <Shortcut Id="GroovyGAPIShortcut" Name="Groovy GroovyDocs" Description="Groovy GroovyDocs" Target="[APPLICATIONFOLDER]\docs\html\gapi\index.html" />
+          <Shortcut Id="GroovyJDKShortcut" Name="Groovy JDK API" Description="Groovy JDK API" Target="[APPLICATIONFOLDER]\docs\html\groovy-jdk\index.html" />
+          <RemoveFolder Id="RemoveDocumentationProgramsFolder" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\[ProductName]" Name="DocsShortcutsInstalled" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Feature>
+    </Feature>
+  </Fragment>
 </Wix>
