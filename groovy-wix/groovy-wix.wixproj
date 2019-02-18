@@ -39,7 +39,7 @@
     <Compile Include="GroovyDocs.wsx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="groovy-license.rtf" />
+    <Content Include="groovy-licenses.rtf" />
     <Content Include="groovy.ico" />
     <Content Include="groovyConsole.vbs" />
   </ItemGroup>
