@@ -1,5 +1,10 @@
 # groovy-wix
-A [WIX](https://wixtoolset.org/) based installer for Groovy.
+A [WiX](https://wixtoolset.org/) based installer for Groovy.
+
+## Required tools
+* [WiX toolset 3.11](https://wixtoolset.org/releases/)
+* [Visual Studio 2019](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16)
+* [WIX Toolset Visual Studio 2019 Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2019Extension)
 
 ## Steps for a new release
 1. Create the diectories _apache-groovy-binary_ and _apache-groovy-docs_ in the project root
