@@ -1,5 +1,6 @@
 # groovy-wix
 A [WiX](https://wixtoolset.org/) based installer for Groovy.
+Binaries are available on [JFrog](https://groovy.jfrog.io/artifactory/dist-release-local/groovy-windows-installer/).
 
 ## Required tools
 * [WiX toolset 3.11](https://wixtoolset.org/releases/)
