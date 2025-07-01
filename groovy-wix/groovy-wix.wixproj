@@ -1,63 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="WixToolset.Sdk/6.0.1">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.10</ProductVersion>
-    <ProjectGuid>aacf45d5-532f-4ea1-8747-138dee1e93a0</ProjectGuid>
-    <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>groovy-x.y.z</OutputName>
-    <OutputType>Package</OutputType>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <SuppressAllWarnings>True</SuppressAllWarnings>
-    <Pedantic>False</Pedantic>
-    <VerboseOutput>False</VerboseOutput>
+  <PropertyGroup>
+    <OutputName>groovy-x.y.z</OutputName>
+    <DefineConstants>groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
     <WixVariables>
     </WixVariables>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <WixExtension Include="WixUIExtension">
-      <HintPath>wix311-binaries\WixUIExtension.dll</HintPath>
-      <Name>WixUIExtension</Name>
-    </WixExtension>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="GroovyBinaries.wsx" />
-    <Compile Include="GroovyDocs.wsx" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="groovy-licenses.rtf" />
     <Content Include="groovy.ico" />
     <Content Include="groovyConsole.vbs" />
   </ItemGroup>
-  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
-  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
-    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
-  </Target>
-  <PropertyGroup>
-    <PreBuildEvent>"$(WIX)bin\heat.exe" dir $(SolutionDir)apache-groovy-binary -cg GroovyBinaries -gg -g1 -srd -scom -sreg -sfrag -dr APPLICATIONFOLDER -var var.binariesSourceFolder -out $(ProjectDir)GroovyBinaries.wsx
-"$(WIX)bin\heat.exe" dir $(SolutionDir)apache-groovy-docs -cg GroovyDocs -gg -g1 -srd -scom -sreg -sfrag -dr DocsFolder -var var.docsSourceFolder -out $(ProjectDir)GroovyDocs.wsx</PreBuildEvent>
-  </PropertyGroup>
-  <!--
-	To modify your build process, add your task inside one of the targets below and uncomment it.
-	Other similar extension points exist, see Wix.targets.
-	<Target Name="BeforeBuild">
-	</Target>
-	<Target Name="AfterBuild">
-	</Target>
-	-->
 </Project>
