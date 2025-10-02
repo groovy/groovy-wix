@@ -1,0 +1,55 @@
+name: Build Groovy MSI
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      groovy_version:
+        description: 'Groovy version to package'
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup WiX Toolset
+      uses: wixtoolset/wix-actions/setup-wix@v1
+      with:
+        wix-version: 6.0.1
+
+    - name: Download and Unzip Groovy
+      run: |
+        $groovy_version = "${{ github.event.inputs.groovy_version }}"
+        $binary_url = "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-$groovy_version.zip"
+        $docs_url = "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-docs-$groovy_version.zip"
+        
+        Invoke-WebRequest -Uri $binary_url -OutFile apache-groovy-binary.zip
+        Invoke-WebRequest -Uri $docs_url -OutFile apache-groovy-docs.zip
+        
+        Expand-Archive -Path apache-groovy-binary.zip -DestinationPath apache-groovy-binary
+        Expand-Archive -Path apache-groovy-docs.zip -DestinationPath apache-groovy-docs
+      shell: powershell
+
+    - name: List extracted files
+      run: |
+        echo "Contents of apache-groovy-binary:"
+        dir apache-groovy-binary
+        echo "Contents of apache-groovy-docs:"
+        dir apache-groovy-docs
+      shell: cmd
+
+    - name: Build MSI
+      run: |
+        $groovy_version = "${{ github.event.inputs.groovy_version }}"
+        msbuild.exe groovy-wix/groovy-wix.wixproj /p:Configuration=Release /p:Platform=x86 /p:groovyVersion=$groovy_version /p:OutputName=groovy-$groovy_version /p:binariesSourceFolder=..\apache-groovy-binary\groovy-$groovy_version /p:docsSourceFolder=..\apache-groovy-docs\groovy-$groovy_version
+      shell: cmd
+
+    - name: Upload MSI artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: groovy-msi
+        path: groovy-wix/bin/x86/Release/en-US/groovy-${{ github.event.inputs.groovy_version }}.msi
