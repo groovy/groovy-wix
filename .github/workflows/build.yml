@@ -1,0 +1,141 @@
+name: Build Groovy MSI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      groovy_version:
+        description: 'Manual Groovy version to package (optional)'
+        required: false
+
+jobs:
+  get-versions:
+    runs-on: windows-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        shell: pwsh
+        run: |
+          if ("${{ github.event.inputs.groovy_version }}" -ne "") {
+            $matrix = @{ version = @("${{ github.event.inputs.groovy_version }}") } | ConvertTo-Json -Compress
+            echo "matrix=$matrix" >> $GITHUB_OUTPUT
+            return
+          }
+
+          # Fetch tags from GitHub API
+          $allTags = @()
+          for ($i=1; $i -le 3; $i++) {
+            try {
+              $t = Invoke-RestMethod -Uri "https://api.github.com/repos/apache/groovy/tags?per_page=100&page=$i"
+              $allTags += $t
+            } catch {
+              # Ignore errors for subsequent pages if they don't exist
+            }
+          }
+          
+          # Target branches
+          $branches = @("2_5_", "3_0_", "4_0_", "5_0_", "6_0_")
+          $latest = foreach ($branch in $branches) {
+              # Find the latest tag for this branch
+              $tag = $allTags | Where-Object { $_.name -like "GROOVY_$branch*" } | Select-Object -First 1
+              if ($tag) {
+                  $v = $tag.name -replace '^GROOVY_', ''
+                  # Special case: GROOVY_6_0_0_ALPHA_1 -> 6.0.0-alpha-1
+                  if ($v -match '^\d+_\d+_\d+_[A-Z]+_\d+$') {
+                      $parts = $v -split '_'
+                      "$($parts[0]).$($parts[1]).$($parts[2])-$($parts[3].ToLower())-$($parts[4])"
+                  } else {
+                      $v -replace '_', '.'
+                  }
+              }
+          }
+          $latest = $latest | Where-Object { $_ -ne $null } | Select-Object -Unique
+          $matrix = @{ version = $latest } | ConvertTo-Json -Compress
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  build:
+    needs: get-versions
+    runs-on: windows-latest
+    strategy:
+      matrix: ${{ fromJson(needs.get-versions.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup WiX Toolset
+      uses: wixtoolset/wix-actions/setup-wix@v1
+      with:
+        wix-version: 6.0.1
+
+    - name: Prepare Version Strings
+      id: version
+      shell: pwsh
+      run: |
+        $full = "${{ matrix.version }}"
+        # WiX version must be numeric X.Y.Z[.W]
+        # For 6.0.0-alpha-1, we use 6.0.0.1
+        $numeric = $full -replace '-.*', ''
+        if ($full -match '-(alpha|beta|rc)-(\d+)') {
+            $suffixNum = $Matches[2]
+            $numeric = "$numeric.$suffixNum"
+        }
+        
+        echo "full=$full" >> $GITHUB_OUTPUT
+        echo "numeric=$numeric" >> $GITHUB_OUTPUT
+        echo "Version to use: $full (Numeric for WiX: $numeric)"
+
+    - name: Download and Unzip Groovy
+      shell: pwsh
+      run: |
+        $v = "${{ steps.version.outputs.full }}"
+        $binary_url = "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-$v.zip"
+        $docs_url = "https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-docs-$v.zip"
+        
+        echo "Downloading $binary_url"
+        Invoke-WebRequest -Uri $binary_url -OutFile apache-groovy-binary.zip
+        echo "Downloading $docs_url"
+        Invoke-WebRequest -Uri $docs_url -OutFile apache-groovy-docs.zip
+        
+        Expand-Archive -Path apache-groovy-binary.zip -DestinationPath apache-groovy-binary
+        Expand-Archive -Path apache-groovy-docs.zip -DestinationPath apache-groovy-docs
+
+    - name: Replace x.y.z in project files
+      shell: pwsh
+      run: |
+        $vFull = "${{ steps.version.outputs.full }}"
+        $vNum = "${{ steps.version.outputs.numeric }}"
+        $projFile = "groovy-wix/groovy-wix.wixproj"
+        
+        # Replace x.y.z with numeric version for groovyVersion, but use full version for OutputName
+        (Get-Content $projFile) `
+            -replace '<OutputName>groovy-x\.y\.z</OutputName>', "<OutputName>groovy-$vFull</OutputName>" `
+            -replace 'groovyVersion=x\.y\.z', "groovyVersion=$vNum" `
+            | Set-Content $projFile
+
+    - name: Build MSI
+      shell: pwsh
+      run: |
+        $vFull = "${{ steps.version.outputs.full }}"
+        $vNum = "${{ steps.version.outputs.numeric }}"
+        
+        # Resolve paths to extracted content (zips contain a root folder named groovy-$vFull)
+        $binDir = Resolve-Path "apache-groovy-binary/groovy-$vFull"
+        $docsDir = Resolve-Path "apache-groovy-docs/groovy-$vFull"
+        
+        # Build using msbuild
+        msbuild.exe groovy-wix/groovy-wix.wixproj /p:Configuration=Release /p:Platform=x86 `
+            /p:groovyVersion=$vNum `
+            /p:binariesSourceFolder=$binDir `
+            /p:docsSourceFolder=$docsDir
+
+
+    - name: Upload MSI artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: groovy-${{ matrix.version }}-msi
+        path: groovy-wix/bin/x86/Release/en-US/groovy-${{ matrix.version }}.msi
