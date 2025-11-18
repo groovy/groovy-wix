@@ -7,14 +7,15 @@ Binaries are available on [JFrog](https://groovy.jfrog.io/artifactory/dist-relea
 
 ### Required
 
-* [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
+* msbuild (from [Visual Studio 2022](https://visualstudio.microsoft.com/vs/), [Build Tools for Visual Studio](https://aka.ms/vs/stable/vs_BuildTools.exe), or [JetBrains Rider](https://www.jetbrains.com/rider/))
 * [WiX Toolset](https://github.com/wixtoolset/wix/releases)
 
 ### Optional
 
-* [WiX v3 extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2022Extension)
-* [HeatWave extension](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17)
-* [Jetbrains Rider](https://www.jetbrains.com/rider/)
+* [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
+  * [WiX v3 Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2022Extension)
+  * [HeatWave Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17)
+* [JetBrains Rider](https://www.jetbrains.com/rider/)
 
 ## Steps for a new release
 
@@ -53,12 +54,23 @@ The result will be something like
         </PropertyGroup>
    ```
 
-3. Build the solution (`& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86`)
+3. Build the solution using one of the commands below (depending on how you installed `msbuild`)
+   ```powershell
+   & "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
+   & "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
+   & "$env:LOCALAPPDATAPrograms\Rider\tools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
+   ```
 4. Upload the new installer to [Groovy JFrog](https://groovy.jfrog.io/ui/repos/tree/General/dist-release-local/groovy-windows-installer). The MSI should be put in a new directory, with the name of the release version.
-
 ## Cleanup
 
-Reset the project by cleaning the solution (`& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" msbuild groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86`) and running the commands below
+Reset the project by cleaning the solution using one of the commands below (depending on how you installed `msbuild`)
+```powershell
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
+& "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
+& "$env:LOCALAPPDATAPrograms\Rider\tools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
+```
+
+Then run these commands
 
 ```powershell
 Remove-Item -Path "apache-groovy-binary", "apache-groovy-docs" -Recurse -Force
