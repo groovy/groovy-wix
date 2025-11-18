@@ -1,0 +1,26 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Groovy" Language="1033" Version="$(var.groovyVersion)" Manufacturer="The Groovy Team" UpgradeCode="786bfbd0-0462-4aad-b54e-70f1f3f58a9a" InstallerVersion="200"><MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="GroovyIcon" SourceFile="groovy.ico" />
+    <Property Id="ARPPRODUCTICON" Value="GroovyIcon" />
+
+    <ui:WixUI Id="WixUI_Mondo" />
+    <WixVariable Id="WixUILicenseRtf" Value="groovy-licenses.rtf" />
+
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="APPLICATION_FOLDER" Name="Groovy">
+        <Directory Id="DocsFolder" Name="docs" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Groovy">
+        <Directory Id="DocumentationProgramsFolder" Name="Documentation" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder" />
+
+    <FeatureRef Id="GroovyBinaries" />
+    <FeatureRef Id="GroovyDocs" />
+  </Package>
+</Wix>

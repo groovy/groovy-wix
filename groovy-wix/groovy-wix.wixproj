@@ -9,7 +9,11 @@
     </WixVariables>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Product.wxs" />
+    <Compile Include="GroovyBinaries.wxs" />
+    <Compile Include="GroovyDocumentation.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Package.wxs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.UI.wixext" Version="6.0.1" />
