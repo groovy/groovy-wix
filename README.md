@@ -53,12 +53,12 @@ The result will be something like
         </PropertyGroup>
    ```
 
-3. Build the solution (`& "C:\Program Files\Microsoft Visual Studio\22022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86`)
+3. Build the solution (`& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86`)
 4. Upload the new installer to [Groovy JFrog](https://groovy.jfrog.io/ui/repos/tree/General/dist-release-local/groovy-windows-installer). The MSI should be put in a new directory, with the name of the release version.
 
 ## Cleanup
 
-Reset the project by cleaning the solution (`& "C:\Program Files\Microsoft Visual Studio\22022\Community\MSBuild\Current\Bin\MSBuild.exe" msbuild groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86`) and running the commands below
+Reset the project by cleaning the solution (`& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" msbuild groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86`) and running the commands below
 
 ```powershell
 Remove-Item -Path "apache-groovy-binary", "apache-groovy-docs" -Recurse -Force
