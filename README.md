@@ -58,7 +58,7 @@ The result will be something like
    ```powershell
    & "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
    & "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
-   & "$env:LOCALAPPDATAPrograms\Rider\tools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
+   $env:LOCALAPPDATAPrograms\Rider\tools\MSBuild\Current\Bin\MSBuild.exe groovy-wix.slnx /t:Build /p:Configuration=Release /p:Platform=x86
    ```
 4. Upload the new installer to [Groovy JFrog](https://groovy.jfrog.io/ui/repos/tree/General/dist-release-local/groovy-windows-installer). The MSI should be put in a new directory, with the name of the release version.
 ## Cleanup
@@ -67,7 +67,7 @@ Reset the project by cleaning the solution using one of the commands below (depe
 ```powershell
 & "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
 & "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
-& "$env:LOCALAPPDATAPrograms\Rider\tools\MSBuild\Current\Bin\MSBuild.exe" groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
+$env:LOCALAPPDATAPrograms\Rider\tools\MSBuild\Current\Bin\MSBuild.exe groovy-wix.slnx /t:Clean /p:Configuration=Release /p:Platform=x86
 ```
 
 Then run these commands
