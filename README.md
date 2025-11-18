@@ -14,9 +14,6 @@ Binaries are available on [JFrog](https://groovy.jfrog.io/artifactory/dist-relea
 
 * [WiX v3 extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2022Extension)
 * [HeatWave extension](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17)
-
-Or
-
 * [Jetbrains Rider](https://www.jetbrains.com/rider/)
 
 ## Steps for a new release
