@@ -7,13 +7,13 @@ Binaries are available on [JFrog](https://groovy.jfrog.io/artifactory/dist-relea
 
 ### Required
 
-* msbuild (from [Visual Studio 2022](https://visualstudio.microsoft.com/vs/), [Build Tools for Visual Studio](https://aka.ms/vs/stable/vs_BuildTools.exe), or [JetBrains Rider](https://www.jetbrains.com/rider/))
+* msbuild (from [Visual Studio](https://visualstudio.microsoft.com/vs/), [Build Tools for Visual Studio](https://aka.ms/vs/stable/vs_BuildTools.exe), or [JetBrains Rider](https://www.jetbrains.com/rider/))
 * [WiX Toolset](https://github.com/wixtoolset/wix/releases)
 
 ### Optional
 
-* [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
-  * [WiX v3 Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2022Extension)
+* [Visual Studio](https://visualstudio.microsoft.com/vs/)
+  * [WiX v3 Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WixToolsetVisualStudio2022Extension) (only works with VS 2022)
   * [HeatWave Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=FireGiant.FireGiantHeatWaveDev17)
 * [JetBrains Rider](https://www.jetbrains.com/rider/)
 
