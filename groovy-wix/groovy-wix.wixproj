@@ -4,9 +4,26 @@
   </PropertyGroup>
   <PropertyGroup>
     <OutputName>groovy-x.y.z</OutputName>
-    <DefineConstants>groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
     <WixVariables>
     </WixVariables>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DefineConstants>$(DefineConstants);groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DefineConstants>$(DefineConstants);groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <DefineConstants>$(DefineConstants);groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <DefineConstants>$(DefineConstants);groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DefineConstants>$(DefineConstants);groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <DefineConstants>$(DefineConstants);groovyVersion=x.y.z;binariesSourceFolder=$(SolutionDir)apache-groovy-binary;docsSourceFolder=$(SolutionDir)apache-groovy-docs</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GroovyBinaries.wxs" />
